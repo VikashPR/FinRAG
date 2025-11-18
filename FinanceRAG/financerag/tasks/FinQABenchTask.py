@@ -9,7 +9,7 @@ class FinQABench(BaseTask):
             description="FinQABench: A New QA Benchmark for Finance applications",
             reference="https://huggingface.co/datasets/lighthouzai/finqabench",
             dataset={
-                "path": "Linq-AI-Research/FinDER",
+                "path": "Linq-AI-Research/FinanceRAG",
                 "subset": "FinQABench",
             },
             type="RAG",

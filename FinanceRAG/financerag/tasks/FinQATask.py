@@ -9,7 +9,7 @@ class FinQA(BaseTask):
             description="FinQA: A Dataset of Numerical Reasoning over Financial Data",
             reference="https://github.com/czyssrs/FinQA",
             dataset={
-                "path": "Linq-AI-Research/FinDER",
+                "path": "Linq-AI-Research/FinanceRAG",
                 "subset": "FinQA",
             },
             type="RAG",

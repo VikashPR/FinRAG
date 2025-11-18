@@ -9,7 +9,7 @@ class FinanceBench(BaseTask):
             description="FinanceBench: A New Benchmark for Financial Question Answering",
             reference="https://github.com/patronus-ai/financebench",
             dataset={
-                "path": "Linq-AI-Research/FinDER",
+                "path": "Linq-AI-Research/FinanceRAG",
                 "subset": "FinanceBench",
             },
             type="RAG",

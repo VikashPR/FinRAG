@@ -11,7 +11,7 @@ class FinDER(BaseTask):
         description="Prepared for competition from Linq",
         reference=None,
         dataset={
-            "path": "Linq-AI-Research/FinDER",
+            "path": "Linq-AI-Research/FinanceRAG",
             "subset": "FinDER",
         },
         type="RAG",
