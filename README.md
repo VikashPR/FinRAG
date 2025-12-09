@@ -1,6 +1,7 @@
 ### (1) Environment Setup
 To begin, install the necessary dependencies:
 
+
 ```bash
 # Set up a virtual environment
 python -m venv financerag_env
