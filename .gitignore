@@ -167,3 +167,4 @@ chroma_db/
 *.sqlite3
 *.pkl
 *.pickle
+chroma_db/chroma.sqlite3
