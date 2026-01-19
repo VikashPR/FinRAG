@@ -1,0 +1,6 @@
+Index,Description,Parameters,Init_Time_sec,Retrieval_Time_sec,Total_Time_sec,NDCG@1,NDCG@5,NDCG@10,MAP@1,MAP@5,MAP@10,Recall@1,Recall@5,Recall@10,Precision@1,Precision@5,Precision@10
+FLAT,"Brute force exact search - highest accuracy, slowest",{},0.55,3784.86,3785.43,0.3125,0.386,0.4281,0.2531,0.3465,0.3685,0.2531,0.4594,0.5742,0.3125,0.1219,0.0797
+IVF_FLAT,Inverted file with flat vectors - good balance,{'nlist': 128},0.02,3596.5,3596.53,0.3125,0.386,0.4281,0.2531,0.3465,0.3685,0.2531,0.4594,0.5742,0.3125,0.1219,0.0797
+IVF_SQ8,Inverted file with scalar quantization - memory efficient,{'nlist': 128},0.02,3726.11,3726.14,0.3125,0.386,0.4281,0.2531,0.3465,0.3685,0.2531,0.4594,0.5742,0.3125,0.1219,0.0797
+IVF_PQ,Inverted file with product quantization - most memory efficient,"{'nlist': 128, 'm': 8, 'nbits': 8}",0.03,3836.59,3836.64,0.3125,0.386,0.4281,0.2531,0.3465,0.3685,0.2531,0.4594,0.5742,0.3125,0.1219,0.0797
+HNSW,Hierarchical navigable small world - best speed/accuracy trade-off,"{'M': 16, 'efConstruction': 200}",0.02,4001.52,4001.55,0.3125,0.386,0.4281,0.2531,0.3465,0.3685,0.2531,0.4594,0.5742,0.3125,0.1219,0.0797
