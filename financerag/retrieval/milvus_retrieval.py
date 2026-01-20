@@ -26,6 +26,7 @@ class MilvusRetrieval(Retrieval):
         embedding_dim: int = 1024,
         index_type: str = "AUTOINDEX",
         index_params: Optional[Dict] = None,
+        search_params: Optional[Dict] = None,
     ):
         """
         Initializes the MilvusRetrieval class.
@@ -45,6 +46,8 @@ class MilvusRetrieval(Retrieval):
                 Index type for Milvus. Options: FLAT, IVF_FLAT, IVF_SQ8, IVF_PQ, HNSW, DISKANN, etc.
             index_params (`Dict`, *optional*):
                 Additional parameters for index creation (e.g., nlist for IVF, M and efConstruction for HNSW).
+            search_params (`Dict`, *optional*):
+                Search-time parameters (e.g., nprobe for IVF indices, ef for HNSW).
         """
         self.model = model
         self.collection_name = collection_name
@@ -53,6 +56,7 @@ class MilvusRetrieval(Retrieval):
         self.embedding_dim = embedding_dim
         self.index_type = index_type
         self.index_params = index_params or {}
+        self.search_params = search_params or {}
         
         # Create parent directory for Milvus Lite if it doesn't exist
         if uri.endswith(".db"):
@@ -149,12 +153,19 @@ class MilvusRetrieval(Retrieval):
         for i, query_id in enumerate(query_ids):
             query_embedding = query_embeddings[i].tolist()
             
-            # Query Milvus
+            # Prepare search parameters
+            search_params_dict = {
+                "metric_type": "COSINE",
+                "params": self.search_params
+            }
+            
+            # Query Milvus with search parameters
             search_results = self.client.search(
                 collection_name=self.collection_name,
                 data=[query_embedding],
                 limit=min(top_k, len(corpus)),
                 output_fields=["doc_id"],
+                search_params=search_params_dict,
             )
             
             # Format results (search_results is a list of lists)
