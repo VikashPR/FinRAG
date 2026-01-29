@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Dict, List, Optional, Literal
 import pathlib
 
@@ -68,6 +69,7 @@ class MilvusRetrieval(Retrieval):
         self.client = MilvusClient(uri=uri)
         
         logger.info(f"Initialized Milvus client with URI: {uri}, Index Type: {index_type}")
+        self.timing_metrics: Dict[str, float] = {}
 
     def retrieve(
         self,
@@ -133,10 +135,13 @@ class MilvusRetrieval(Retrieval):
             `Dict[str, Dict[str, float]]`:
                 Nested dictionary with query IDs as keys, and document IDs mapped to similarity scores.
         """
+        total_start = time.perf_counter()
+        self.timing_metrics = {}
         logger.info("Starting Milvus-based retrieval...")
         
         # Step 1: Create collection and index corpus
-        self._index_corpus(corpus)
+        indexing_time = self._index_corpus(corpus)
+        self.timing_metrics["indexing_time"] = indexing_time
         
         # Step 2: Encode queries and search
         results = {}
@@ -144,12 +149,16 @@ class MilvusRetrieval(Retrieval):
         query_texts = [queries[qid] for qid in query_ids]
         
         logger.info(f"Encoding {len(query_texts)} queries...")
+        qenc_start = time.perf_counter()
         query_embeddings = self.model.encode_queries(
             query_texts,
             batch_size=self.batch_size,
         )
+        query_encoding_time = time.perf_counter() - qenc_start
+        self.timing_metrics["query_encoding_time"] = query_encoding_time
         
         # Search for each query
+        search_start = time.perf_counter()
         for i, query_id in enumerate(query_ids):
             query_embedding = query_embeddings[i].tolist()
             
@@ -181,11 +190,24 @@ class MilvusRetrieval(Retrieval):
                 scores = dict(sorted(scores.items(), key=lambda x: x[1], reverse=True))
             
             results[query_id] = scores
-        
+
+        retrieval_time = time.perf_counter() - search_start
+        self.timing_metrics["retrieval_time"] = retrieval_time
+        if len(queries) > 0:
+            self.timing_metrics["avg_query_time"] = retrieval_time / len(queries)
+        self.timing_metrics["total_time"] = time.perf_counter() - total_start
+
+        logger.info(
+            "MilvusRetrieval timings | "
+            f"indexing={self.timing_metrics['indexing_time']:.2f}s, "
+            f"query_encode={self.timing_metrics['query_encoding_time']:.2f}s, "
+            f"retrieval={self.timing_metrics['retrieval_time']:.2f}s, "
+            f"total={self.timing_metrics['total_time']:.2f}s"
+        )
         logger.info(f"Retrieval complete for {len(results)} queries.")
         return results
 
-    def _index_corpus(self, corpus: Dict[str, Dict[str, str]]):
+    def _index_corpus(self, corpus: Dict[str, Dict[str, str]]) -> float:
         """
         Indexes the corpus into Milvus.
 
@@ -193,6 +215,7 @@ class MilvusRetrieval(Retrieval):
             corpus (`Dict[str, Dict[str, str]]`):
                 Dictionary mapping document IDs to documents with 'title' and 'text' fields.
         """
+        start = time.perf_counter()
         # Check if collection exists
         if self.client.has_collection(collection_name=self.collection_name):
             # Get collection stats
@@ -204,7 +227,7 @@ class MilvusRetrieval(Retrieval):
                 logger.info(
                     f"Collection '{self.collection_name}' already exists with {existing_count} documents. Skipping indexing."
                 )
-                return
+                return time.perf_counter() - start
             else:
                 logger.info(
                     f"Collection exists but has different document count ({existing_count} vs {len(corpus)}). Recreating..."
@@ -277,6 +300,7 @@ class MilvusRetrieval(Retrieval):
             logger.info(f"Added {end_idx}/{len(doc_ids)} documents to Milvus")
         
         logger.info(f"Indexed {len(doc_ids)} documents into Milvus collection '{self.collection_name}'")
+        return time.perf_counter() - start
 
     def _get_index_params(self) -> Dict:
         """
@@ -307,3 +331,17 @@ class MilvusRetrieval(Retrieval):
             "metric_type": "COSINE",
             "params": params
         }
+
+    def get_timing_metrics(self) -> Dict[str, float]:
+        """
+        Get timing metrics from the last retrieval operation.
+
+        Returns:
+            Dictionary containing timing information:
+            - indexing_time: Time to index corpus (may be near-zero if skipped)
+            - query_encoding_time: Time to encode queries
+            - retrieval_time: Time spent in Milvus searches
+            - avg_query_time: Average retrieval time per query (search only)
+            - total_time: Total time for search()
+        """
+        return self.timing_metrics

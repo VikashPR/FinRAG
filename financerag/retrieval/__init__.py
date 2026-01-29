@@ -12,3 +12,8 @@ try:
     from .milvus_retrieval import MilvusRetrieval
 except ImportError:
     MilvusRetrieval = None
+
+try:
+    from .postgres_retrieval import PostgresVectorRetrieval
+except ImportError:
+    PostgresVectorRetrieval = None

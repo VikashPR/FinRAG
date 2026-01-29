@@ -1,5 +1,6 @@
 import heapq
 import logging
+import time
 from typing import Any, Callable, Dict, Literal, Optional
 
 import torch
@@ -110,6 +111,7 @@ class DenseRetrieval(Retrieval):
         self.score_functions: Dict[str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]] = score_functions
         self.corpus_chunk_size: int = corpus_chunk_size
         self.results: Dict = {}
+        self.timing_metrics: Dict[str, float] = {}
 
     def retrieve(
             self,
@@ -146,18 +148,24 @@ class DenseRetrieval(Retrieval):
                 A dictionary where each key is a query ID, and the value is another dictionary mapping document
                 IDs to their similarity scores.
         """
+        total_start = time.perf_counter()
+        self.timing_metrics = {}
+
         if score_function not in self.score_functions:
             raise ValueError(
                 f"Score function: {score_function} must be either 'cos_sim' for cosine similarity or 'dot' for dot product."
             )
 
         logger.info("Encoding queries...")
+        query_start = time.perf_counter()
         query_ids = list(queries.keys())
         self.results = {qid: {} for qid in query_ids}
         query_texts = [queries[qid] for qid in queries]
         query_embeddings = self.model.encode_queries(
             query_texts, batch_size=self.batch_size, **kwargs
         )
+        query_encoding_time = time.perf_counter() - query_start
+        self.timing_metrics["query_encoding_time"] = query_encoding_time
 
         logger.info("Sorting corpus by document length...")
         sorted_corpus_ids = sorted(
@@ -172,6 +180,8 @@ class DenseRetrieval(Retrieval):
         }  # Keep only the top-k docs for each query
 
         corpus_list = [corpus[cid] for cid in sorted_corpus_ids]
+        corpus_encoding_time = 0.0
+        scoring_time = 0.0
 
         for batch_num, start_idx in enumerate(
                 range(0, len(corpus), self.corpus_chunk_size)
@@ -182,14 +192,18 @@ class DenseRetrieval(Retrieval):
             end_idx = min(start_idx + self.corpus_chunk_size, len(corpus_list))
 
             # Encode chunk of corpus
+            enc_start = time.perf_counter()
             sub_corpus_embeddings = self.model.encode_corpus(
                 corpus_list[start_idx:end_idx], batch_size=self.batch_size, **kwargs
             )
+            corpus_encoding_time += time.perf_counter() - enc_start
 
             # Compute similarities using either cosine similarity or dot product
+            score_start = time.perf_counter()
             cos_scores = self.score_functions[score_function](
                 query_embeddings, sub_corpus_embeddings
             )
+            scoring_time += time.perf_counter() - score_start
             cos_scores[torch.isnan(cos_scores)] = -1
 
             # Get top-k values
@@ -225,4 +239,32 @@ class DenseRetrieval(Retrieval):
             for score, corpus_id in result_heaps[qid]:
                 self.results[qid][corpus_id] = score
 
+        self.timing_metrics["corpus_encoding_time"] = corpus_encoding_time
+        self.timing_metrics["scoring_time"] = scoring_time
+        self.timing_metrics["total_time"] = time.perf_counter() - total_start
+        if len(queries) > 0:
+            # Note: scoring_time is mostly the "search" compute; avg_query_time is a helpful rough indicator.
+            self.timing_metrics["avg_query_time"] = self.timing_metrics["total_time"] / len(queries)
+
+        logger.info(
+            "DenseRetrieval timings | "
+            f"query_encode={self.timing_metrics['query_encoding_time']:.2f}s, "
+            f"corpus_encode={self.timing_metrics['corpus_encoding_time']:.2f}s, "
+            f"scoring={self.timing_metrics['scoring_time']:.2f}s, "
+            f"total={self.timing_metrics['total_time']:.2f}s"
+        )
         return self.results
+
+    def get_timing_metrics(self) -> Dict[str, float]:
+        """
+        Get timing metrics from the last retrieval operation.
+
+        Returns:
+            Dictionary containing timing information:
+            - query_encoding_time: Time to encode queries
+            - corpus_encoding_time: Time to encode corpus (sum over chunks)
+            - scoring_time: Time to compute similarities + top-k selection (sum over chunks)
+            - avg_query_time: Total time divided by number of queries (rough)
+            - total_time: Total time for the retrieve() call
+        """
+        return self.timing_metrics
