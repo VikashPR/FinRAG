@@ -1,0 +1,16 @@
+{
+  "index_type": "IVF_SQ8",
+  "index_build_time_sec": 1.03,
+  "total_search_time_sec": 0.55,
+  "avg_query_time_ms": 2.53,
+  "ndcg@1": 0.3125,
+  "ndcg@5": 0.389,
+  "ndcg@10": 0.426,
+  "recall@1": 0.2531,
+  "recall@5": 0.4672,
+  "recall@10": 0.5664,
+  "precision@1": 0.3125,
+  "precision@5": 0.125,
+  "precision@10": 0.0797,
+  "map@10": 0.3672
+}

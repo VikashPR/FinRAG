@@ -1,0 +1,16 @@
+{
+  "index_type": "IVF_PQ",
+  "index_build_time_sec": 3.56,
+  "total_search_time_sec": 0.54,
+  "avg_query_time_ms": 2.5,
+  "ndcg@1": 0.1562,
+  "ndcg@5": 0.2206,
+  "ndcg@10": 0.2514,
+  "recall@1": 0.1289,
+  "recall@5": 0.274,
+  "recall@10": 0.3604,
+  "precision@1": 0.1562,
+  "precision@5": 0.0781,
+  "precision@10": 0.0547,
+  "map@10": 0.2015
+}

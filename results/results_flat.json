@@ -1,0 +1,16 @@
+{
+  "index_type": "FLAT",
+  "index_build_time_sec": 0.52,
+  "total_search_time_sec": 1.18,
+  "avg_query_time_ms": 5.47,
+  "ndcg@1": 0.3125,
+  "ndcg@5": 0.386,
+  "ndcg@10": 0.4281,
+  "recall@1": 0.2531,
+  "recall@5": 0.4594,
+  "recall@10": 0.5742,
+  "precision@1": 0.3125,
+  "precision@5": 0.1219,
+  "precision@10": 0.0797,
+  "map@10": 0.3685
+}
