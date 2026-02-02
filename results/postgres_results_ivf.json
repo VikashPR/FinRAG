@@ -1,0 +1,17 @@
+{
+  "index_type": "IVF",
+  "database": "PostgreSQL",
+  "index_build_time_sec": 4.98,
+  "total_search_time_sec": 1.76,
+  "avg_query_time_ms": 8.17,
+  "ndcg@1": 0.3125,
+  "ndcg@5": 0.3822,
+  "ndcg@10": 0.4226,
+  "recall@1": 0.2531,
+  "recall@5": 0.4594,
+  "recall@10": 0.5664,
+  "precision@1": 0.3125,
+  "precision@5": 0.1219,
+  "precision@10": 0.0797,
+  "map@10": 0.363
+}

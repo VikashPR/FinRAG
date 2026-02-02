@@ -1,0 +1,17 @@
+{
+  "index_type": "HNSW",
+  "database": "PostgreSQL",
+  "index_build_time_sec": 15.01,
+  "total_search_time_sec": 1.45,
+  "avg_query_time_ms": 6.7,
+  "ndcg@1": 0.2969,
+  "ndcg@5": 0.3605,
+  "ndcg@10": 0.4027,
+  "recall@1": 0.2375,
+  "recall@5": 0.4281,
+  "recall@10": 0.543,
+  "precision@1": 0.2969,
+  "precision@5": 0.1156,
+  "precision@10": 0.0766,
+  "map@10": 0.3451
+}
