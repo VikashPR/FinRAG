@@ -1,9 +1,9 @@
 {
   "index_type": "NMSLIB_HNSW",
   "database": "OpenSearch",
-  "index_build_time_sec": 5.71,
-  "total_search_time_sec": 6.09,
-  "avg_query_time_ms": 28.19,
+  "index_build_time_sec": 6.58,
+  "total_search_time_sec": 5.76,
+  "avg_query_time_ms": 26.68,
   "ndcg@1": 0.3125,
   "ndcg@5": 0.3761,
   "ndcg@10": 0.4183,
