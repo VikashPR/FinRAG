@@ -1,0 +1,17 @@
+{
+  "index_type": "LUCENE_HNSW",
+  "database": "OpenSearch",
+  "index_build_time_sec": 26.74,
+  "total_search_time_sec": 5.42,
+  "avg_query_time_ms": 25.09,
+  "ndcg@1": 0.3125,
+  "ndcg@5": 0.3761,
+  "ndcg@10": 0.4183,
+  "recall@1": 0.2531,
+  "recall@5": 0.4438,
+  "recall@10": 0.5586,
+  "precision@1": 0.3125,
+  "precision@5": 0.1188,
+  "precision@10": 0.0781,
+  "map@10": 0.3607
+}
