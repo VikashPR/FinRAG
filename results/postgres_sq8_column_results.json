@@ -1,0 +1,21 @@
+{
+  "database": "PostgreSQL",
+  "method": "SQ8_column_per_dimension",
+  "quantization": "SQ8",
+  "schema": "1024 integer columns (x1\u2026x1024)",
+  "retrieval": "SQL dot product: CAST(x AS INT) * q_float",
+  "insert_time_sec": 11.44,
+  "index_build_time_sec": 0.0,
+  "total_search_time_sec": 86.33,
+  "avg_query_time_ms": 399.69,
+  "ndcg@1": 0.3125,
+  "ndcg@5": 0.386,
+  "ndcg@10": 0.4277,
+  "recall@1": 0.2531,
+  "recall@5": 0.4594,
+  "recall@10": 0.5742,
+  "precision@1": 0.3125,
+  "precision@5": 0.1219,
+  "precision@10": 0.0797,
+  "map@10": 0.3682
+}
