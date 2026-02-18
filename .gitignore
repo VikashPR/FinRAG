@@ -168,3 +168,5 @@ chroma_db/
 *.pkl
 *.pickle
 chroma_db/chroma.sqlite3
+
+.zvec_collections
