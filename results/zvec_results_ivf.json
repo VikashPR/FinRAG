@@ -1,0 +1,18 @@
+{
+  "vector_db": "zvec",
+  "index_type": "IVF",
+  "insert_time_sec": 0.45,
+  "index_build_time_sec": 0.58,
+  "total_search_time_sec": 0.07,
+  "avg_query_time_ms": 0.34,
+  "ndcg@1": 0.3125,
+  "ndcg@5": 0.3908,
+  "ndcg@10": 0.4331,
+  "recall@1": 0.2531,
+  "recall@5": 0.4664,
+  "recall@10": 0.582,
+  "precision@1": 0.3125,
+  "precision@5": 0.1281,
+  "precision@10": 0.0828,
+  "map@10": 0.3732
+}
