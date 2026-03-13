@@ -165,7 +165,6 @@ cython_debug/
 chroma_db/
 *.db
 *.sqlite3
-*.pkl
 *.pickle
 chroma_db/chroma.sqlite3
 
